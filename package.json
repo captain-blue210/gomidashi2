@@ -1,0 +1,27 @@
+{
+  "name": "gomidashi-kun2",
+  "version": "1.0.0",
+  "description": "Personal LINE garbage collection notification",
+  "main": "lib/index.js",
+  "scripts": {
+    "build": "tsc",
+    "deploy": "npm ci && npm run build && gcloud functions deploy sendGarbageNotification --gen2 --runtime nodejs20 --trigger-topic garbage-notification-topic --project gomidashi2 --region asia-northeast1 --update-labels force-update=true --entry-point sendGarbageNotification"
+  },
+  "dependencies": {
+    "@google-cloud/functions-framework": "^3.4.6",
+    "@line/bot-sdk": "^7.7.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.24",
+    "typescript": "^4.9.5"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "directories": {
+    "lib": "lib"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
