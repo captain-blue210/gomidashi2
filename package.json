@@ -5,7 +5,9 @@
   "main": "lib/index.js",
   "scripts": {
     "build": "tsc",
-    "deploy": "npm ci && npm run build && gcloud functions deploy sendGarbageNotification --gen2 --runtime nodejs20 --trigger-topic garbage-notification-topic --project gomidashi2 --region asia-northeast1 --update-labels force-update=true --entry-point sendGarbageNotification"
+    "deploy": "npm ci && npm run build && gcloud functions deploy sendGarbageNotification --gen2 --runtime nodejs20 --trigger-topic garbage-notification-topic --project gomidashi2 --region asia-northeast1 --update-labels force-update=true --entry-point sendGarbageNotification",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@google-cloud/functions-framework": "^3.4.6",
@@ -13,7 +15,8 @@
   },
   "devDependencies": {
     "@types/node": "^20.11.24",
-    "typescript": "^4.9.5"
+    "typescript": "^4.9.5",
+    "vitest": "^3.0.8"
   },
   "engines": {
     "node": ">=20.0.0"
