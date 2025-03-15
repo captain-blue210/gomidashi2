@@ -1,16 +1,32 @@
 export interface GarbageSchedule {
   type: string;
+  displayName?: string; // 表示用の名前（詳細情報を含む）
   dayOfWeek: number; // 0: 日曜日, 1: 月曜日, ... 6: 土曜日
   weekOfMonth?: number[]; // 第何週目か (1-5)、未指定の場合は毎週
 }
 
+// ゴミ種類の定義
+export const GARBAGE_TYPES = {
+  BURNABLE: "燃えるゴミ",
+  RESOURCE: "資源ゴミ",
+  NON_BURNABLE: "不燃ゴミ",
+};
+
+// 詳細表示用の定義
+export const GARBAGE_DISPLAY_NAMES = {
+  [GARBAGE_TYPES.BURNABLE]: "燃えるゴミ",
+  [GARBAGE_TYPES.RESOURCE]: "資源ゴミ（びん・かん・ペットボトル・紙・布類）",
+  [GARBAGE_TYPES.NON_BURNABLE]:
+    "不燃ゴミ（プラスチック・せともの・ガラス・金物類・\n小型家電製品・蛍光灯・電球・乾電池・充電式機器・\nスプレー缶・ライター）",
+};
+
 // ゴミ出しスケジュール
 // 実際のスケジュールに合わせて修正してください
 export const garbageSchedules: GarbageSchedule[] = [
-  { type: "燃えるゴミ", dayOfWeek: 2 }, // 毎週火曜日
-  { type: "燃えるゴミ", dayOfWeek: 5 }, // 毎週金曜日
-  { type: "資源ゴミ", dayOfWeek: 3, weekOfMonth: [2, 4] }, // 第2・第4水曜日
-  { type: "不燃ゴミ", dayOfWeek: 3, weekOfMonth: [1, 3] }, // 第1・第3水曜日
+  { type: GARBAGE_TYPES.BURNABLE, dayOfWeek: 2 }, // 毎週火曜日
+  { type: GARBAGE_TYPES.BURNABLE, dayOfWeek: 5 }, // 毎週金曜日
+  { type: GARBAGE_TYPES.RESOURCE, dayOfWeek: 4 }, // 毎週木曜日
+  { type: GARBAGE_TYPES.NON_BURNABLE, dayOfWeek: 1 }, // 毎週月曜日
 ];
 
 /**
@@ -48,6 +64,13 @@ export function getGarbageByDate(date: Date): string[] {
 }
 
 /**
+ * ゴミ種類の表示名を取得する
+ */
+export function getGarbageDisplayName(garbageType: string): string {
+  return GARBAGE_DISPLAY_NAMES[garbageType] || garbageType;
+}
+
+/**
  * 日付から第何週目かを計算する (1-5)
  */
 function getWeekOfMonth(date: Date): number {
@@ -64,9 +87,9 @@ export function createTomorrowGarbageMessage(): string {
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
 
-  const garbageList = getTomorrowGarbage();
+  const garbageTypes = getTomorrowGarbage();
 
-  if (garbageList.length === 0) {
+  if (garbageTypes.length === 0) {
     return "";
   }
 
@@ -75,7 +98,10 @@ export function createTomorrowGarbageMessage(): string {
   const dayNames = ["日", "月", "火", "水", "木", "金", "土"];
   const day = dayNames[tomorrow.getDay()];
 
-  return `【ゴミ出し通知】\n明日（${month}月${date}日・${day}曜日）は\n${garbageList.join(
+  // 標準の種類名を表示用の詳細名に変換
+  const garbageDisplayNames = garbageTypes.map(getGarbageDisplayName);
+
+  return `【ゴミ出し通知】\n明日（${month}月${date}日・${day}曜日）は\n${garbageDisplayNames.join(
     "と"
   )}の日です。\n忘れずに出してください！`;
 }
